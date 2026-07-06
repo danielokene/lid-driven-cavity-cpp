@@ -101,10 +101,10 @@ Simulation outputs are written as CSV files and can be visualized using the acco
 
 ```text
 src/            C++ source files
-include/        Header files
 docs/           Numerical methods and documentation
 results/        Simulation outputs and figures
 scripts/        Build and plotting scripts
+assets/         images and other files
 ```
 
 ---
