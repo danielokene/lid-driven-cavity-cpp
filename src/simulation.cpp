@@ -281,6 +281,51 @@ void Simulation::solveMomentum()
 // initialize solve pressure equation function
 void Simulation::solvePressure()
 {
+    int N = config.N;
+
+    // perform jacobi iterations
+    for (int iter = 0; iter < config.pressureIterations; iter++)
+    {
+        double maxPressureChange = 0.0; // to monitor convergence of the pressure solver
+
+        // Sweeping over interior cells
+        for (int i = 1; i < N - 1; i++)
+        {
+            for (int j = 1; j < N - 1; j++)
+            {
+                double divergence = firstDerivativeX(uStar, i, j, dx) + firstDerivativeY(vStar, i, j, dy); // Compute divergence of u*
+                double source = (config.rho / dt) * divergence; //pressure source term
+
+                double neighborAverage = (p(i+1,j) + p(i-1,j) + p(i,j+1) + p(i,j-1)) / 4.0; // Average of neighboring cells pressures
+                //
+
+                double newPressure = neighborAverage - (dx * dx / 4.0) * source; // Update pressure using Jacobi formula
+
+                // Tracking convergence
+                double change = std::abs(newPressure - p(i,j));
+                maxPressureChange = std::max(maxPressureChange, change);
+
+                pNew(i,j) = newPressure; // Store the new pressure value in a temporary matrix
+            }
+        }
+
+        // Update the pressure field
+        for (int i = 1; i < N - 1; i++)
+        {
+            for (int j = 1; j < N - 1; j++)
+            {
+                p(i,j) = pNew(i,j);
+            }
+        }
+
+        applyPressureBoundaryConditions(); // apply boundary conditions to the pressure field
+        
+        // Check for convergence
+        if (maxPressureChange < config.pressureTolerance)
+        {
+            break;
+        }
+    }
 }
 
 // initialize correct velocity function

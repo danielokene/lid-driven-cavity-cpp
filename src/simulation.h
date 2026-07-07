@@ -20,8 +20,10 @@ struct Config
 
     // Solver settings
     double cfl = 0.5; // CFL number for stability
-    double tolerance = 1e-8; // convergence tolerance
+    double tolerance = 1e-8; // solver convergence tolerance
+    double pressureTolerance = 1e-6; // pressure convergence tolerance
     int maxIterations = 1000; // maximum number of iterations
+    int pressureIterations = 100; // number of iterations for pressure solver
     double residual = 1.0; // current residual for convergence monitoring
 
 };
