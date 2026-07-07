@@ -158,7 +158,7 @@ void Simulation::initializeFields()
 // initialize boundary conditions function
 void Simulation::applyBoundaryConditions()
 {
-    applyVelocityBoundaryConditions();
+    applyVelocityBoundaryConditions(u, v);
     applyPressureBoundaryConditions();
 }
 
@@ -191,7 +191,24 @@ void Simulation::applyVelocityBoundaryConditions(Matrix& U, Matrix& V)
 // initialize pressure boundary conditions function
 void Simulation::applyPressureBoundaryConditions()
 {
+    int N = config.N;
 
+    // Left & Right
+    for(int j=0;j<N;j++)
+    {
+        p(0,j)=p(1,j);
+        p(N-1,j)=p(N-2,j);
+    }
+
+    // Bottom & Top
+    for(int i=0;i<N;i++)
+    {
+        p(i,0)=p(i,1);
+        p(i,N-1)=p(i,N-2);
+    }
+
+    // Reference pressure
+    p(0,0)=0.0;
 }
 
 // initialize run simulation function
@@ -319,7 +336,7 @@ void Simulation::solvePressure()
         }
 
         applyPressureBoundaryConditions(); // apply boundary conditions to the pressure field
-        
+
         // Check for convergence
         if (maxPressureChange < config.pressureTolerance)
         {
