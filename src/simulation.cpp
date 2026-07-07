@@ -169,6 +169,21 @@ void Simulation::run()
 // initialize computeTimeStep function
 void Simulation::computeTimeStep()
 {
+    double umax = maxAbs(u);
+    double vmax = maxAbs(v);
+
+    double velocity = std::max(umax, vmax);
+
+    if (velocity < 1e-12)
+        velocity = config.lidVelocity; // to avoid division by zero set the lid velocity to the neede velocity
+
+    double dtConvective = 
+        config.cfl * dx / velocity; // convective stability limit
+
+    double dtDiffusive =
+        0.25 * dx * dx / config.nu; // diffusive stability limit
+
+    dt = std::min(dtConvective, dtDiffusive); // choose the minimun stablity limit as the dt value
 }
 
 // initialize solve momentum equation function

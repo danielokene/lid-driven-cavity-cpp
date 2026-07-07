@@ -19,7 +19,7 @@ struct Config
     double lidVelocity = 1.0; // lid velocity
 
     // Solver settings
-    double dt = 0.01; // time step size
+    double cfl = 0.5; // CFL number for stability
     double tolerance = 1e-8; // convergence tolerance
     int maxIterations = 1000; // maximum number of iterations
 
@@ -55,6 +55,8 @@ class Simulation
 
         double dx{}; // Grid spacing in x-direction
         double dy{}; // Grid spacing in y-direction
+        double dt{}; // time step size
+
 
         std::vector<double> x; // x-coordinates of the grid
         std::vector<double> y; // y-coordinates of the grid
