@@ -194,21 +194,21 @@ void Simulation::applyPressureBoundaryConditions()
     int N = config.N;
 
     // Left & Right
-    for(int j=0;j<N;j++)
+    for(int j = 0; j < N; j++)
     {
-        p(0,j)=p(1,j);
-        p(N-1,j)=p(N-2,j);
+        p(0, j) = p(1, j);
+        p(N-1, j) = p(N-2, j);
     }
-
+    
     // Bottom & Top
-    for(int i=0;i<N;i++)
+    for(int i = 0; i < N; i++)
     {
-        p(i,0)=p(i,1);
-        p(i,N-1)=p(i,N-2);
+        p(i, 0) = p(i, 1);
+        p(i, N-1) = p(i, N-2);
     }
 
     // Reference pressure
-    p(0,0)=0.0;
+    p(0, 0) = 0.0;
 }
 
 // initialize run simulation function
