@@ -107,11 +107,63 @@ void Simulation::initializeFields()
 // initialize boundary conditions function
 void Simulation::applyBoundaryConditions()
 {
+    applyVelocityBoundaryConditions();
+    applyPressureBoundaryConditions();
+}
+
+// initialize velocity boundary conditions function
+void Simulation::applyVelocityBoundaryConditions()
+{
+    int N = config.N;
+
+    // Left wall
+    for (int j = 0; j < N; j++)
+    {
+        u(0, j) = 0.0;
+        v(0, j) = 0.0;
+    }
+
+    // Right wall
+    for (int j = 0; j < N; j++)
+    {
+        u(N - 1, j) = 0.0;
+        v(N - 1, j) = 0.0;
+    }
+
+    // Bottom wall
+    for (int i = 0; i < N; i++)
+    {
+        u(i, 0) = 0.0;
+        v(i, 0) = 0.0;
+    }
+
+    // Top wall (moving lid)
+    for (int i = 0; i < N; i++)
+    {
+        u(i, N - 1) = config.lidVelocity;
+        v(i, N - 1) = 0.0;
+    }
+}
+
+// initialize pressure boundary conditions function
+void Simulation::applyPressureBoundaryConditions()
+{
+
 }
 
 // run simulation function
 void Simulation::run()
 {
+    while (!hasConverged())
+    {
+        computeTimeStep();
+        solveMomentum();
+        solvePressure();
+        correctVelocity();
+        applyBoundaryConditions();
+        updateResiduals();
+    
+    }
 }
 
 // write results function

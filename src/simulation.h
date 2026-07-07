@@ -39,7 +39,10 @@ class Simulation
 
         void initializeGrid(); // Initialize the computational grid
         void initializeFields(); // Initialize the velocity and pressure fields
+        
         void applyBoundaryConditions(); // Apply boundary conditions to the velocity and pressure fields
+        void applyVelocityBoundaryConditions(); // Apply velocity boundary conditions
+        void applyPressureBoundaryConditions(); // Apply pressure boundary conditions
 
         Config config; // Configuration parameters
 
