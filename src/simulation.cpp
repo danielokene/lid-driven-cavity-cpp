@@ -78,6 +78,55 @@ namespace
         }
         return true;
     }
+
+    // returns the first derivative of x
+    double firstDerivativeX( const Matrix& field,
+        int i, int j, double dx
+    )
+    {
+        return (
+            field(i+1, j) - field(i-1, j)
+        ) / (2.0 * dx);
+    }
+
+    // returns the first derivative of y
+    double firstDerivativeY( const Matrix& field,
+        int i, int j, double dy
+    )
+    {
+        return (
+            field(i, j+1) - field(i, j-1)
+        ) / (2.0 * dy);
+    }
+
+    // returns the second derivative of x
+    double secondDerivativeX( const Matrix& field,
+        int i, int j, double dx
+    )
+    {
+        return (
+            field(i+1, j) - 2.0 * field(i, j) + field(i-1, j)
+        ) / (dx * dx);
+    }
+
+    // returns the second derivative of y
+    double secondDerivativeY( const Matrix& field,
+        int i, int j, double dy
+    )
+    {
+        return (
+            field(i, j+1) - 2.0 * field(i, j) + field(i, j-1)
+        ) / (dy * dy);
+    }
+
+    // returns the Laplacian of a field
+    double laplacian( const Matrix& field,
+        int i, int j, double dx, double dy
+    )
+    {
+        return secondDerivativeX(field, i, j, dx) +
+               secondDerivativeY(field, i, j, dy);
+    }
 }
 
 // 
@@ -97,6 +146,8 @@ void Simulation::initialize()
 // initialize grid function
 void Simulation::initializeGrid()
 {
+    uStar = Matrix(config.N);
+    vStar = Matrix(config.N);
 }
 
 // initialize fields function

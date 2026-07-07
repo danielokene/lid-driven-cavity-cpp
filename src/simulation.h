@@ -63,6 +63,8 @@ class Simulation
 
         Matrix u; // Velocity in x-direction
         Matrix v; // Velocity in y-direction
+        Matrix uStar; // intermediate velocity in x-direction
+        Matrix vStar; // intermediate velocity in y-direction
         Matrix p; // Pressure field
 
         Matrix speed;
