@@ -79,3 +79,42 @@ namespace
         return true;
     }
 }
+
+// 
+Simulation::Simulation(const Config& config)
+    : config(config)
+{
+}
+
+// The overall initialization function
+void Simulation::initialize()
+{
+    initializeGrid();
+    initializeFields();
+    applyBoundaryConditions();
+}
+
+// initialize grid function
+void Simulation::initializeGrid()
+{
+}
+
+// initialize fields function
+void Simulation::initializeFields()
+{
+}
+
+// initialize boundary conditions function
+void Simulation::applyBoundaryConditions()
+{
+}
+
+// run simulation function
+void Simulation::run()
+{
+}
+
+// write results function
+void Simulation::writeResults()
+{
+}

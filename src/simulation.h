@@ -28,8 +28,26 @@ struct Config
 
 class Simulation
 {
+    public:
+        Simulation(const Config& config); // Constructor
+
+        void initialize(); // Initialize the simulation parameters and fields
+        void run(); // Run the simulation
+        void writeResults(); // Write the simulation results to output files
+    
     private:
+
+        void initializeGrid(); // Initialize the computational grid
+        void initializeFields(); // Initialize the velocity and pressure fields
+        void applyBoundaryConditions(); // Apply boundary conditions to the velocity and pressure fields
+
         Config config; // Configuration parameters
+
+        double dx{}; // Grid spacing in x-direction
+        double dy{}; // Grid spacing in y-direction
+
+        std::vector<double> x; // x-coordinates of the grid
+        std::vector<double> y; // y-coordinates of the grid
 
         Matrix u; // Velocity in x-direction
         Matrix v; // Velocity in y-direction
@@ -38,15 +56,5 @@ class Simulation
         Matrix speed;
         Matrix vorticity;
 
-
-        std::vector<double> x; // x-coordinates of the grid
-        std::vector<double> y; // y-coordinates of the grid
-
         std::vector<double> residualHistory; // History of residuals for convergence monitoring
-
-    public:
-        void initialize(); // Initialize the simulation parameters and fields
-        void run(); // Run the simulation
-        void writeResults(); // Write the simulation results to output files
-
 };

@@ -1,3 +1,5 @@
 #pragma once
 
-#include <string>
+class Simulation;
+
+void writeVelocityCSV(const Simulation& simulation);
