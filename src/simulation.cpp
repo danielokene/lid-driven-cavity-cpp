@@ -151,7 +151,7 @@ void Simulation::applyPressureBoundaryConditions()
 
 }
 
-// run simulation function
+// initialize run simulation function
 void Simulation::run()
 {
     while (!hasConverged())
@@ -164,6 +164,37 @@ void Simulation::run()
         updateResiduals();
     
     }
+}
+
+// initialize computeTimeStep function
+void Simulation::computeTimeStep()
+{
+}
+
+// initialize solve momentum equation function
+void Simulation::solveMomentum()
+{
+}
+
+// initialize solve pressure equation function
+void Simulation::solvePressure()
+{
+}
+
+// initialize correct velocity function
+void Simulation::correctVelocity()
+{
+}
+
+// initialize update residuals function
+void Simulation::updateResiduals()
+{
+}
+
+// initialize the has converged function
+bool Simulation::hasConverged() const
+{
+    return true;
 }
 
 // write results function

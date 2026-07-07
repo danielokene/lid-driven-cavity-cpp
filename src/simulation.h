@@ -39,10 +39,17 @@ class Simulation
 
         void initializeGrid(); // Initialize the computational grid
         void initializeFields(); // Initialize the velocity and pressure fields
-        
+
         void applyBoundaryConditions(); // Apply boundary conditions to the velocity and pressure fields
         void applyVelocityBoundaryConditions(); // Apply velocity boundary conditions
         void applyPressureBoundaryConditions(); // Apply pressure boundary conditions
+
+        void computeTimeStep(); // Compute the time step size based on CFL condition
+        void solveMomentum(); // Solve the momentum equations for velocity fields
+        void solvePressure(); // Solve the pressure Poisson equation
+        void correctVelocity(); // Correct the velocity field to satisfy continuity
+        void updateResiduals(); // Update the residuals for convergence monitoring
+        bool hasConverged() const; // Check if the simulation has converged based on residuals
 
         Config config; // Configuration parameters
 
