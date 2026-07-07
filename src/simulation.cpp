@@ -163,36 +163,28 @@ void Simulation::applyBoundaryConditions()
 }
 
 // initialize velocity boundary conditions function
-void Simulation::applyVelocityBoundaryConditions()
+void Simulation::applyVelocityBoundaryConditions(Matrix& U, Matrix& V)
 {
     int N = config.N;
 
-    // Left wall
+    // Left and Right wall
     for (int j = 0; j < N; j++)
     {
-        u(0, j) = 0.0;
-        v(0, j) = 0.0;
+        U(0, j) = 0.0;
+        V(0, j) = 0.0;
+    
+        U(N - 1, j) = 0.0;
+        V(N - 1, j) = 0.0;
     }
 
-    // Right wall
-    for (int j = 0; j < N; j++)
-    {
-        u(N - 1, j) = 0.0;
-        v(N - 1, j) = 0.0;
-    }
-
-    // Bottom wall
+    // Bottom and Top wall
     for (int i = 0; i < N; i++)
     {
-        u(i, 0) = 0.0;
-        v(i, 0) = 0.0;
-    }
-
-    // Top wall (moving lid)
-    for (int i = 0; i < N; i++)
-    {
-        u(i, N - 1) = config.lidVelocity;
-        v(i, N - 1) = 0.0;
+        U(i, 0) = 0.0;
+        V(i, 0) = 0.0;
+ 
+        U(i, N - 1) = config.lidVelocity;
+        V(i, N - 1) = 0.0;
     }
 }
 
@@ -240,6 +232,50 @@ void Simulation::computeTimeStep()
 // initialize solve momentum equation function
 void Simulation::solveMomentum()
 {
+    int N = config.N;
+
+    for (int i = 1; i < N - 1; i++)
+    {
+        for (int j = 1; j < N - 1; j++)
+        {
+            //----------------------------
+            // Compute derivatives
+            //----------------------------
+
+            // u-components derivatives
+            double dudx = firstDerivativeX(u, i, j, dx);
+            double dudy = firstDerivativeY(u, i, j, dy);
+            double dpdx = firstDerivativeX(p, i, j, dx);
+            double laplaceU = laplacian(u, i, j, dx, dy);
+
+            // v-components derivatives
+            double dvdx = firstDerivativeX(v, i, j, dx);
+            double dvdy = firstDerivativeY(v, i, j, dy);
+            double dpdy = firstDerivativeY(p, i, j, dy); 
+            double laplaceV = laplacian(v, i, j, dx, dy);
+
+            //----------------------------
+            // Compute convection terms
+            //----------------------------
+            double convectionU = u(i,j) * dudx + v(i,j) * dudy; // u-convection term
+            double convectionV = u(i,j) * dvdx + v(i,j) * dvdy; // v-convection term
+
+            //----------------------------
+            // Compute diffusion terms
+            //--------------------------
+            double diffusionU = config.nu * laplaceU; // u-diffusion term
+            double diffusionV = config.nu * laplaceV; // v-diffusion term
+            
+            //----------------------------
+            // Update u* and v*
+            //----------------------------
+            uStar(i,j) = u(i,j) + dt * ( -convectionU -(dpdx/config.rho)+diffusionU); 
+            
+            vStar(i,j) = v(i,j) + dt * ( -convectionV -(dpdy/config.rho)+diffusionV); 
+        }
+    }
+    // reapplyng the boundary conditions to the intermediate velocity
+    applyVelocityBoundaryConditions(uStar, vStar);
 }
 
 // initialize solve pressure equation function

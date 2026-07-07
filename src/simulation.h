@@ -22,6 +22,7 @@ struct Config
     double cfl = 0.5; // CFL number for stability
     double tolerance = 1e-8; // convergence tolerance
     int maxIterations = 1000; // maximum number of iterations
+    double residual = 1.0; // current residual for convergence monitoring
 
 };
 
@@ -41,7 +42,7 @@ class Simulation
         void initializeFields(); // Initialize the velocity and pressure fields
 
         void applyBoundaryConditions(); // Apply boundary conditions to the velocity and pressure fields
-        void applyVelocityBoundaryConditions(); // Apply velocity boundary conditions
+        void applyVelocityBoundaryConditions(Matrix& U, Matrix& V); // Apply velocity boundary conditions
         void applyPressureBoundaryConditions(); // Apply pressure boundary conditions
 
         void computeTimeStep(); // Compute the time step size based on CFL condition
@@ -66,6 +67,7 @@ class Simulation
         Matrix uStar; // intermediate velocity in x-direction
         Matrix vStar; // intermediate velocity in y-direction
         Matrix p; // Pressure field
+        Matrix pNew; // temporary pressure matrix
 
         Matrix speed;
         Matrix vorticity;
