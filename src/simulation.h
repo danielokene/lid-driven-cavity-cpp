@@ -20,7 +20,7 @@ struct Config
 
     // Fluid properties
     double rho = 1.0; // fluid density
-    double viscosity() const
+    double kinematicViscosity() const
     {
         return lidVelocity * length / Re;
     } // kinematic viscosity

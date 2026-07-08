@@ -140,9 +140,9 @@ Simulation::Simulation(const Config& config)
 void Simulation::initialize()
 {
     initializeMatrices();
+
     dx = config.length / (config.N - 1);
     dy = config.height / (config.N - 1);
-    applyBoundaryConditions();
 
     x.resize(config.N);
     y.resize(config.N);
@@ -152,6 +152,8 @@ void Simulation::initialize()
         x[i] = i * dx;
         y[i] = i * dy;
     }
+
+    applyBoundaryConditions();
 
     residualHistory.clear(); // clears residual history for fresh simulation
 }
@@ -246,6 +248,14 @@ void Simulation::run()
         solvePressure();
         correctVelocity();
         
+        // NaN check
+        if(!allFinite(u) || !allFinite(v) || !allFinite(p))
+        {
+            throw std::runtime_error(
+                "Solution diverged."
+            );
+        }
+
         // compute velocity residual
         double velocityResidual = computeVelocityResidual();
         residualHistory.push_back(velocityResidual); // saving the residual history
@@ -316,7 +326,7 @@ void Simulation::computeTimeStep()
         config.cfl * dx / velocity; // convective stability limit
 
     double dtDiffusive =
-        0.25 * dx * dx / config.viscosity(); // diffusive stability limit
+        0.25 * dx * dx / config.kinematicViscosity(); // diffusive stability limit
 
     dt = std::min(dtConvective, dtDiffusive); // choose the minimun stablity limit as the dt value
 }
@@ -355,8 +365,8 @@ void Simulation::solveMomentum()
             //----------------------------
             // Compute diffusion terms
             //--------------------------
-            double diffusionU = config.viscosity() * laplaceU; // u-diffusion term
-            double diffusionV = config.viscosity() * laplaceV; // v-diffusion term
+            double diffusionU = config.kinematicViscosity() * laplaceU; // u-diffusion term
+            double diffusionV = config.kinematicViscosity() * laplaceV; // v-diffusion term
             
             //----------------------------
             // Update u* and v*
@@ -525,7 +535,7 @@ void Simulation::writeSimulationInfo(const std::string& outputFolder)
     file << "Reynolds Number     : " << config.Re << "\n";
     file << "Lid Velocity        : " << config.lidVelocity << "\n";
     file << "Density             : " << config.rho << "\n";
-    file << "Kinematic Viscosity : " << config.viscosity() << "\n\n";
+    file << "Kinematic kinematicViscosity : " << config.kinematicViscosity() << "\n\n";
 
     file << "Solver Settings\n";
     file << "---------------------------\n";

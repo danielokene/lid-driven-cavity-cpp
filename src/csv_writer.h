@@ -3,7 +3,7 @@
 
 #include <string>
 
-#include "../src/matrix.h"
+#include "matrix.h"
 
 class CSVWriter
 {

@@ -14,14 +14,16 @@ int main()
         // Create simulation configuration
         Config config;
 
+        
         // Display configuration
-
+        std::cout << "Grid Spacing       : "
+                << config.length / (config.N - 1) << "\n";
         std::cout << "Grid Size          : "
-                  << config.N << " x " << config.N << "\n";
+                << config.N << " x " << config.N << "\n";
         std::cout << "Reynolds Number    : "
-                  << config.Re << "\n";
+                << config.Re << "\n";
         std::cout << "Maximum Iterations : "
-                  << config.maxIterations << "\n\n";
+                << config.maxIterations << "\n\n";
         std::cout << "Starting simulation...\n\n";
 
         // Create simulation

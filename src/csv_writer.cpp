@@ -2,6 +2,8 @@
 
 #include <fstream>
 #include <iostream>
+#include <iomanip>
+#include <stdexcept>
 
 // initialize the write matrix function
 void CSVWriter::writeMatrix(const Matrix& matrix,
@@ -16,6 +18,8 @@ void CSVWriter::writeMatrix(const Matrix& matrix,
                   << std::endl;
         return;
     }
+
+    file << std::setprecision(12); //setting data precision
 
     int rows = matrix.rows();
     int cols = matrix.cols();
@@ -53,6 +57,7 @@ void CSVWriter::writeVector(const std::vector<double>& values,
             "Could not open file: " + filename);
     }
 
+    file << std::setprecision(12); //setting data precision
     file << "Iteration,Residual\n";
 
     for (size_t i = 0; i < values.size(); i++)
@@ -79,6 +84,8 @@ void CSVWriter::writeCoordinates(
         throw std::runtime_error(
             "Could not open " + filename);
     }
+
+    file << std::setprecision(12); //setting data precision
 
     for(double value : values)
     {
