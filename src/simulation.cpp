@@ -348,7 +348,22 @@ void Simulation::solvePressure()
 // initialize correct velocity function
 void Simulation::correctVelocity()
 {
+    int N = config.N;
+
+    for (int i = 1; i < config.N - 1; i++)
+    {
+        for (int j = 1; j < config.N - 1; j++)
+        {
+            double dpdx = firstDerivativeX(p, i, j, dx);
+            double dpdy = firstDerivativeY(p, i, j, dy);
+
+            u(i,j) = uStar(i,j) - (dt / config.rho) * dpdx; // Correct u-velocity
+            v(i, j) = vStar(i,j) - (dt / config.rho) * dpdy; // Correct v-velocity 
+        }
+    }
+    applyVelocityBoundaryConditions(u, v);
 }
+
 
 // initialize update residuals function
 void Simulation::updateResiduals()
