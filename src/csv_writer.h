@@ -10,7 +10,11 @@ class CSVWriter
 public:
     // Writes any Matrix object to a CSV file
     static void writeMatrix(const Matrix& matrix,
-                            const std::string& filename);
+        const std::string& filename);
+
+    // Writes any Vector object to a CSV file
+    static void writeVector( const std::vector<double>& values, 
+        const std::string& filename);
 };
 
 #endif

@@ -484,6 +484,9 @@ void Simulation::writeResults()
     // writes velocity magnitude
     CSVWriter::writeMatrix(velocityMagnitude, outputFolder + "velocity_magnitude.csv");
 
+    // writes residual History
+    CSVWriter::writeVector(residualHistory, outputFolder + "residual_history.csv");
+    
     std::cout << "\nResults written successfully.\n"; // success message
 }
 

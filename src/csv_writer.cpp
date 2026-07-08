@@ -39,3 +39,28 @@ void CSVWriter::writeMatrix(const Matrix& matrix,
               << filename
               << std::endl;
 }
+
+void CSVWriter::writeVector(const std::vector<double>& values,
+    const std::string& filename)
+{
+    std::ofstream file(filename);
+
+    if (!file.is_open())
+    {
+        throw std::runtime_error(
+            "Could not open file: " + filename);
+    }
+
+    file << "Iteration,Residual\n";
+
+    for (size_t i = 0; i < values.size(); i++)
+    {
+        file
+            << i
+            << ","
+            << values[i]
+            << "\n";
+    }
+
+    file.close();
+}
