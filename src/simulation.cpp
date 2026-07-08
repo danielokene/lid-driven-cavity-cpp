@@ -432,7 +432,7 @@ double Simulation::computeVelocityResidual()
 // write results function
 void Simulation::writeResults()
 {
-    const std::string outputFolder = "../result/";
+    const std::string outputFolder = "../results/";
     CSVWriter::writeMatrix(u, "outputFolder + velocity_u.csv"); // writes u-velocity
     CSVWriter::writeMatrix(v, "outputFolder + velocity_v.csv"); // writes v-velocity
     CSVWriter::writeMatrix(p, "outputFolder + pressure.csv"); // writes pressure
@@ -451,4 +451,28 @@ void Simulation::writeResults()
     CSVWriter::writeMatrix(velocityMagnitude, "outputFolder + velocity_magnitude.csv");
 
     std::cout << "\nResults written successfully.\n"; // success message
+}
+
+// initialze teh compute maximum velocity function
+double Simulation::computeMaximumVelocity()
+{
+    double maxVelocity = 0.0;
+
+    for (int i = 0; i < config.N; i++)
+    {
+        for (int j = 0; j < config.N; j++)
+        {
+            double velocity =
+                std::sqrt(
+                    u(i,j)*u(i,j)
+                    +
+                    v(i,j)*v(i,j)
+                );
+
+            maxVelocity =
+                std::max(maxVelocity, velocity);
+        }
+    }
+
+    return maxVelocity;
 }

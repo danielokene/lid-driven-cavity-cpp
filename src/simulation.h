@@ -54,6 +54,8 @@ class Simulation
         void correctVelocity(); // Correct the velocity field to satisfy continuity
         void updateResiduals(); // Update the residuals for convergence monitoring
         double computeVelocityResidual(); // computes maximum velocity change
+        double computeMaximumVelocity(); // computes the maximum velocity of the current iteration when called
+
 
         Config config; // Configuration parameters
 
