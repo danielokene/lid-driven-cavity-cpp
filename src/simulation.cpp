@@ -486,7 +486,11 @@ void Simulation::writeResults()
 
     // writes residual History
     CSVWriter::writeVector(residualHistory, outputFolder + "residual_history.csv");
-    
+
+    // writes computational grid coordinates
+    CSVWriter::writeCoordinates(x, outputFolder + "x.csv"); // x-coordinate
+    CSVWriter::writeCoordinates(y, outputFolder + "y.csv"); // y-coordinate
+
     std::cout << "\nResults written successfully.\n"; // success message
 }
 

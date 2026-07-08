@@ -15,6 +15,10 @@ public:
     // Writes any Vector object to a CSV file
     static void writeVector( const std::vector<double>& values, 
         const std::string& filename);
+    
+    // writes any coordinate object to a CSV file
+    static void writeCoordinates(const std::vector<double>& values,
+        const std::string& filename);
 };
 
 #endif

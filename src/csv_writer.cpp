@@ -3,6 +3,7 @@
 #include <fstream>
 #include <iostream>
 
+// initialize the write matrix function
 void CSVWriter::writeMatrix(const Matrix& matrix,
                             const std::string& filename)
 {
@@ -40,6 +41,7 @@ void CSVWriter::writeMatrix(const Matrix& matrix,
               << std::endl;
 }
 
+// initialize the write vector function
 void CSVWriter::writeVector(const std::vector<double>& values,
     const std::string& filename)
 {
@@ -60,6 +62,27 @@ void CSVWriter::writeVector(const std::vector<double>& values,
             << ","
             << values[i]
             << "\n";
+    }
+
+    file.close();
+}
+
+// initialize the write coordinate function
+void CSVWriter::writeCoordinates(
+    const std::vector<double>& values,
+    const std::string& filename)
+{
+    std::ofstream file(filename);
+
+    if (!file.is_open())
+    {
+        throw std::runtime_error(
+            "Could not open " + filename);
+    }
+
+    for(double value : values)
+    {
+        file << value << "\n";
     }
 
     file.close();
