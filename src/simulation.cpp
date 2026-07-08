@@ -1,6 +1,5 @@
 #include "simulation.h"
-#include "io.h"
-#include "../include/csv_writer.h"
+#include "csv_writer.h"
 
 #include <algorithm>
 #include <cmath>
