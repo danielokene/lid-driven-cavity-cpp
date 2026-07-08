@@ -17,7 +17,7 @@ namespace
     // helper functions
 
     // convert text to lowercase
-    std::string toLower(const std::string text)
+    std::string toLower(std::string text)
     {
         std::transform(
             text.begin(),
@@ -32,7 +32,7 @@ namespace
     }
 
     // convert text to uppercase
-    std::string toUpper(const std::string text)
+    std::string toUpper(std::string text)
     {
         std::transform(
             text.begin(),
@@ -234,6 +234,8 @@ void Simulation::applyPressureBoundaryConditions()
 // initialize run simulation function
 void Simulation::run()
 {
+    auto startTime = std::chrono::high_resolution_clock::now(); // start run-time counter
+    
     initialize();
 
     iteration = 0;  // setting iteration = 0 for new simulation
@@ -303,10 +305,22 @@ void Simulation::run()
                 
                 break;
         }
+
+        // checking if maximum iteration is reached before convergence
+        if (iteration == config.maxIterations)
+        {
+            std::cout
+                << "\nMaximum iterations reached before convergence.\n";
+        }
         iteration++;
     
     }
 
+    // stops runtime conter and display time
+    auto endTime = std::chrono::high_resolution_clock::now();
+    elapsedTime = std::chrono::duration<double>(endTime-startTime).count();
+    std::cout << "\nSimulation Time : " << elapsedTime << " s\n";
+    
     // saves the results
     writeResults();
 }
@@ -475,7 +489,7 @@ double Simulation::computeVelocityResidual()
 // write results function
 void Simulation::writeResults()
 {
-    const std::string outputFolder = "../results/";
+    const std::string outputFolder = "results/";
     fs::create_directories(outputFolder); //automatically create the output folder
     
     CSVWriter::writeMatrix(u, outputFolder + "velocity_u.csv"); // writes u-velocity
@@ -549,6 +563,7 @@ void Simulation::writeSimulationInfo(const std::string& outputFolder)
     file << "---------------------------\n";
     file << "Final Time Step     : " << dt << "\n";
     file << "Iterations Performed: " << iteration << "\n";
+    file << "Simulation Time   : " << elapsedTime << " s\n";
 
     if (!residualHistory.empty())
     {

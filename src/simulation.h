@@ -67,6 +67,7 @@ class Simulation
         double dy{}; // Grid spacing in y-direction
         double dt{}; // time step size
         int iteration = 0; // number of iteration
+        double elapsedTime{};   // Total simulation runtime in seconds
 
 
         std::vector<double> x; // x-coordinates of the grid
