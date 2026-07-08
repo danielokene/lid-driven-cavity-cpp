@@ -22,6 +22,7 @@ struct Config
     double cfl = 0.5; // CFL number for stability
     double tolerance = 1e-8; // solver convergence tolerance
     double pressureTolerance = 1e-6; // pressure convergence tolerance
+    double velocityTolerance = 1e-6; // velocity convergence tolerance
     int maxIterations = 1000; // maximum number of iterations
     int pressureIterations = 100; // number of iterations for pressure solver
     double residual = 1.0; // current residual for convergence monitoring
@@ -52,7 +53,7 @@ class Simulation
         void solvePressure(); // Solve the pressure Poisson equation
         void correctVelocity(); // Correct the velocity field to satisfy continuity
         void updateResiduals(); // Update the residuals for convergence monitoring
-        bool hasConverged() const; // Check if the simulation has converged based on residuals
+        double computeVelocityResidual(); // computes maximum velocity change
 
         Config config; // Configuration parameters
 
@@ -68,6 +69,8 @@ class Simulation
         Matrix v; // Velocity in y-direction
         Matrix uStar; // intermediate velocity in x-direction
         Matrix vStar; // intermediate velocity in y-direction
+        Matrix uOld; // previous velocity in x-direction
+        Matrix vOld; // previous velocity in y-direction
         Matrix p; // Pressure field
         Matrix pNew; // temporary pressure matrix
 

@@ -25,4 +25,15 @@ struct Matrix
             return data[i * n + j]; // Access element at (i, j) (const version)
         }
 
+            // Number of rows
+        int rows() const
+        {
+            return n;
+        }
+
+        // Number of columns
+        int cols() const
+        {
+            return n;
+        }
 };

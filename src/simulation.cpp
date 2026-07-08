@@ -1,5 +1,6 @@
 #include "simulation.h"
 #include "io.h"
+#include "../include/csv_writer.h"
 
 #include <algorithm>
 #include <cmath>
@@ -148,6 +149,8 @@ void Simulation::initializeGrid()
 {
     uStar = Matrix(config.N);
     vStar = Matrix(config.N);
+    uOld = Matrix(config.N);
+    vOld = Matrix(config.N);
 }
 
 // initialize fields function
@@ -214,16 +217,50 @@ void Simulation::applyPressureBoundaryConditions()
 // initialize run simulation function
 void Simulation::run()
 {
-    while (!hasConverged())
+    initializeGrid();
+
+    int iteration = 0;
+    while (iteration < config.maxIterations)
     {
+        uOld = u; // Store the previous velocity field
+        vOld = v; // Store the previous velocity field
+
+        // advance one CFD iteration
         computeTimeStep();
         solveMomentum();
         solvePressure();
         correctVelocity();
-        applyBoundaryConditions();
-        updateResiduals();
+        
+        // compute velocity residual
+        double velocityResidual = computeVelocityResidual();
+
+        // Print progress every 100 iterations
+         if (iteration % 100 == 0)
+        {
+            std::cout
+                << "Iteration: "
+                << iteration
+                << "    Max Velocity Change: "
+                << velocityResidual
+                << std::endl;
+        }
+
+        // compute convergence
+        if (velocityResidual < config.velocityTolerance)
+        {
+            std::cout
+                << "\nSolver converged after "
+                << iteration
+                << " iterations.\n";
+                
+                break;
+        }
+        iteration++;
     
     }
+
+    // saves the results
+    writeResults();
 }
 
 // initialize computeTimeStep function
@@ -370,13 +407,43 @@ void Simulation::updateResiduals()
 {
 }
 
-// initialize the has converged function
-bool Simulation::hasConverged() const
+// initialize compute velocity residuals function
+double Simulation::computeVelocityResidual()
 {
-    return true;
+    double maxVelocityChange = 0.0;
+
+        for (int i = 1; i < config.N - 1; i++)
+        {
+            for (int j = 1; j < config.N - 1; j++)
+            {
+                double du = std::abs(u(i, j) - uOld(i, j));
+                double dv = std::abs(v(i, j) - vOld(i, j));
+
+                maxVelocityChange =
+                    std::max(maxVelocityChange, du);
+
+                maxVelocityChange =
+                    std::max(maxVelocityChange, dv);
+            }
+        }
+    
+    return maxVelocityChange;
 }
 
 // write results function
 void Simulation::writeResults()
 {
+    CSVWriter::writeMatrix(u,
+                           "../result/velocity_u.csv");
+
+    CSVWriter::writeMatrix(v,
+                           "../result/velocity_v.csv");
+
+    CSVWriter::writeMatrix(p,
+                           "../result/pressure.csv");
+
+    Matrix magnitude(config.N);
+
+    CSVWriter::writeMatrix(magnitude,
+                           "../result/velocity_magnitude.csv");
 }
