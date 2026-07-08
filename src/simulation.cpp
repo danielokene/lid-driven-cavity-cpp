@@ -234,14 +234,36 @@ void Simulation::run()
         double velocityResidual = computeVelocityResidual();
 
         // Print progress every 100 iterations
-         if (iteration % 100 == 0)
+        if (iteration % 100 == 0)
         {
+            double maxVelocity =
+                computeMaximumVelocity();
+
             std::cout
-                << "Iteration: "
+                << "\n----------------------------------------\n";
+
+            std::cout
+                << "Iteration : "
                 << iteration
-                << "    Max Velocity Change: "
+                << "\n";
+
+            std::cout
+                << "dt        : "
+                << dt
+                << "\n";
+
+            std::cout
+                << "Residual  : "
                 << velocityResidual
-                << std::endl;
+                << "\n";
+
+            std::cout
+                << "Max Speed : "
+                << maxVelocity
+                << "\n";
+
+            std::cout
+                << "----------------------------------------\n";
         }
 
         // compute convergence
