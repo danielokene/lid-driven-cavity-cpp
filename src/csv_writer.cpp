@@ -24,7 +24,6 @@ void CSVWriter::writeMatrix(const Matrix& matrix,
         for (int j = 0; j < cols; j++)
         {
             file << matrix(i, j);
-
             if (j != cols - 1)
             {
                 file << ",";

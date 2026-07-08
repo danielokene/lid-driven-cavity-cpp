@@ -138,24 +138,39 @@ Simulation::Simulation(const Config& config)
 // The overall initialization function
 void Simulation::initialize()
 {
-    initializeGrid();
-    initializeFields();
+    initializeMatrices();
+    dx = config.length / (config.N - 1);
+    dy = config.height / (config.N - 1);
     applyBoundaryConditions();
+
+    x.resize(config.N);
+    y.resize(config.N);
+
+    for (int i = 0; i < config.N; i++)
+    {
+        x[i] = i * dx;
+        y[i] = i * dy;
+    }
+
+    residualHistory.clear(); // clears residual history for fresh simulation
 }
 
-// initialize grid function
-void Simulation::initializeGrid()
+// initialize matrix function
+void Simulation::initializeMatrices()
 {
+    u = Matrix(config.N);
+    v = Matrix(config.N);
+
     uStar = Matrix(config.N);
     vStar = Matrix(config.N);
+
     uOld = Matrix(config.N);
     vOld = Matrix(config.N);
+
+    p = Matrix(config.N);
+    pNew = Matrix(config.N);
 }
 
-// initialize fields function
-void Simulation::initializeFields()
-{
-}
 
 // initialize boundary conditions function
 void Simulation::applyBoundaryConditions()
@@ -216,9 +231,9 @@ void Simulation::applyPressureBoundaryConditions()
 // initialize run simulation function
 void Simulation::run()
 {
-    initializeGrid();
+    initialize();
 
-    int iteration = 0;
+    iteration = 0;  // setting iteration = 0 for new simulation
     while (iteration < config.maxIterations)
     {
         uOld = u; // Store the previous velocity field
@@ -232,6 +247,7 @@ void Simulation::run()
         
         // compute velocity residual
         double velocityResidual = computeVelocityResidual();
+        residualHistory.push_back(velocityResidual); // saving the residual history
 
         // Print progress every 100 iterations
         if (iteration % 100 == 0)
@@ -299,7 +315,7 @@ void Simulation::computeTimeStep()
         config.cfl * dx / velocity; // convective stability limit
 
     double dtDiffusive =
-        0.25 * dx * dx / config.nu; // diffusive stability limit
+        0.25 * dx * dx / config.viscosity(); // diffusive stability limit
 
     dt = std::min(dtConvective, dtDiffusive); // choose the minimun stablity limit as the dt value
 }
@@ -338,8 +354,8 @@ void Simulation::solveMomentum()
             //----------------------------
             // Compute diffusion terms
             //--------------------------
-            double diffusionU = config.nu * laplaceU; // u-diffusion term
-            double diffusionV = config.nu * laplaceV; // v-diffusion term
+            double diffusionU = config.viscosity() * laplaceU; // u-diffusion term
+            double diffusionV = config.viscosity() * laplaceV; // v-diffusion term
             
             //----------------------------
             // Update u* and v*
@@ -422,12 +438,6 @@ void Simulation::correctVelocity()
     applyVelocityBoundaryConditions(u, v);
 }
 
-
-// initialize update residuals function
-void Simulation::updateResiduals()
-{
-}
-
 // initialize compute velocity residuals function
 double Simulation::computeVelocityResidual()
 {
@@ -455,9 +465,11 @@ double Simulation::computeVelocityResidual()
 void Simulation::writeResults()
 {
     const std::string outputFolder = "../results/";
-    CSVWriter::writeMatrix(u, "outputFolder + velocity_u.csv"); // writes u-velocity
-    CSVWriter::writeMatrix(v, "outputFolder + velocity_v.csv"); // writes v-velocity
-    CSVWriter::writeMatrix(p, "outputFolder + pressure.csv"); // writes pressure
+    fs::create_directories(outputFolder); //automatically create the output folder
+    
+    CSVWriter::writeMatrix(u, outputFolder + "velocity_u.csv"); // writes u-velocity
+    CSVWriter::writeMatrix(v, outputFolder + "velocity_v.csv"); // writes v-velocity
+    CSVWriter::writeMatrix(p, outputFolder + "pressure.csv"); // writes pressure
 
     // computes velocity magnitude
     Matrix velocityMagnitude(config.N);
@@ -465,12 +477,12 @@ void Simulation::writeResults()
     {
         for (int j = 0; j < config.N; j++)
         {
-            velocityMagnitude(i, j) = sqrt( u(i, j) * u(i,j)
+            velocityMagnitude(i, j) = std::sqrt( u(i, j) * u(i,j)
                                         + v(i, j) * v(i,j));
         }
     }
     // writes velocity magnitude
-    CSVWriter::writeMatrix(velocityMagnitude, "outputFolder + velocity_magnitude.csv");
+    CSVWriter::writeMatrix(velocityMagnitude, outputFolder + "velocity_magnitude.csv");
 
     std::cout << "\nResults written successfully.\n"; // success message
 }

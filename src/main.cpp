@@ -1,16 +1,46 @@
 #include <iostream>
 #include "simulation.h"
 
+
 int main()
 {
-    std::cout << "Lid-Driven Cavity Solver\n"; // Print a solver message to the console
+    try
+    {
+        // Solver Banner
+        std::cout << "=========================================\n";
+        std::cout << "      2D Lid-Driven Cavity Solver\n";
+        std::cout << "=========================================\n\n";
 
-    Config config;
-    Simulation simulation(config); // Create an instance of the Simulation class
+        // Create simulation configuration
+        Config config;
 
-    simulation.initialize(); // Initialize the simulation parameters
-    simulation.run(); // Run the simulation
-    simulation.writeResults(); // Write the simulation results to output files
+        // Display configuration
 
-    return 0;
+        std::cout << "Grid Size          : "
+                  << config.N << " x " << config.N << "\n";
+        std::cout << "Reynolds Number    : "
+                  << config.Re << "\n";
+        std::cout << "Maximum Iterations : "
+                  << config.maxIterations << "\n\n";
+        std::cout << "Starting simulation...\n\n";
+
+        // Create simulation
+        Simulation simulation(config);
+
+        // Run solver
+        simulation.run();
+
+        // Finished-
+        std::cout << "\nSimulation completed successfully.\n";
+
+        return 0;
+    }
+    catch (const std::exception& e)
+    {
+        std::cerr << "\nError: "
+                  << e.what()
+                  << std::endl;
+
+        return EXIT_FAILURE;
+    }
 }
