@@ -8,6 +8,7 @@
 #include <iostream>
 #include <numeric>
 #include <stdexcept>
+#include <fstream>
 
 namespace fs = std::filesystem;
 
@@ -491,7 +492,61 @@ void Simulation::writeResults()
     CSVWriter::writeCoordinates(x, outputFolder + "x.csv"); // x-coordinate
     CSVWriter::writeCoordinates(y, outputFolder + "y.csv"); // y-coordinate
 
+    // writes simulation info to file
+    writeSimulationInfo(outputFolder);
+
     std::cout << "\nResults written successfully.\n"; // success message
+}
+
+// initialize the write simulation info to file function
+void Simulation::writeSimulationInfo(const std::string& outputFolder)
+{
+    std::ofstream file(outputFolder + "simulation_info.txt");
+
+    if (!file.is_open())
+    {
+        throw std::runtime_error("Could not create simulation_info.txt");
+    }
+
+    file << "=========================================\n";
+    file << "2D Lid-Driven Cavity Simulation\n";
+    file << "=========================================\n\n";
+
+    file << "Grid Information\n";
+    file << "---------------------------\n";
+    file << "Grid Size           : " << config.N << " x " << config.N << "\n";
+    file << "Domain Length       : " << config.length << "\n";
+    file << "Domain Height       : " << config.height << "\n";
+    file << "dx                  : " << dx << "\n";
+    file << "dy                  : " << dy << "\n\n";
+
+    file << "Flow Parameters\n";
+    file << "---------------------------\n";
+    file << "Reynolds Number     : " << config.Re << "\n";
+    file << "Lid Velocity        : " << config.lidVelocity << "\n";
+    file << "Density             : " << config.rho << "\n";
+    file << "Kinematic Viscosity : " << config.viscosity() << "\n\n";
+
+    file << "Solver Settings\n";
+    file << "---------------------------\n";
+    file << "CFL Number          : " << config.cfl << "\n";
+    file << "Pressure Tolerance  : " << config.pressureTolerance << "\n";
+    file << "Velocity Tolerance  : " << config.velocityTolerance << "\n";
+    file << "Maximum Iterations  : " << config.maxIterations << "\n";
+    file << "Pressure Iterations : " << config.pressureIterations << "\n\n";
+
+    file << "Simulation Results\n";
+    file << "---------------------------\n";
+    file << "Final Time Step     : " << dt << "\n";
+    file << "Iterations Performed: " << iteration << "\n";
+
+    if (!residualHistory.empty())
+    {
+        file << "Final Residual      : "
+             << residualHistory.back() << "\n";
+    }
+
+    file.close();
 }
 
 // initialze teh compute maximum velocity function

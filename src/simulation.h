@@ -59,6 +59,7 @@ class Simulation
         double computeVelocityResidual(); // computes maximum velocity change
         double computeMaximumVelocity(); // computes the maximum velocity of the current iteration when called
 
+        void writeSimulationInfo(const std::string& outputFolder); // writes simulation metadata to file
 
         Config config; // Configuration parameters
 
