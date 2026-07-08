@@ -432,17 +432,23 @@ double Simulation::computeVelocityResidual()
 // write results function
 void Simulation::writeResults()
 {
-    CSVWriter::writeMatrix(u,
-                           "../result/velocity_u.csv");
+    const std::string outputFolder = "../result/";
+    CSVWriter::writeMatrix(u, "outputFolder + velocity_u.csv"); // writes u-velocity
+    CSVWriter::writeMatrix(v, "outputFolder + velocity_v.csv"); // writes v-velocity
+    CSVWriter::writeMatrix(p, "outputFolder + pressure.csv"); // writes pressure
 
-    CSVWriter::writeMatrix(v,
-                           "../result/velocity_v.csv");
+    // computes velocity magnitude
+    Matrix velocityMagnitude(config.N);
+    for (int i = 0; i < config.N; i++)
+    {
+        for (int j = 0; j < config.N; j++)
+        {
+            velocityMagnitude(i, j) = sqrt( u(i, j) * u(i,j)
+                                        + v(i, j) * v(i,j));
+        }
+    }
+    // writes velocity magnitude
+    CSVWriter::writeMatrix(velocityMagnitude, "outputFolder + velocity_magnitude.csv");
 
-    CSVWriter::writeMatrix(p,
-                           "../result/pressure.csv");
-
-    Matrix magnitude(config.N);
-
-    CSVWriter::writeMatrix(magnitude,
-                           "../result/velocity_magnitude.csv");
+    std::cout << "\nResults written successfully.\n"; // success message
 }
