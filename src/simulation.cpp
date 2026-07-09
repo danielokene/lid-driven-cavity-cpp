@@ -171,7 +171,6 @@ void Simulation::initializeMatrices()
     vOld = Matrix(config.N);
 
     p = Matrix(config.N);
-    pNew = Matrix(config.N);
 }
 
 
@@ -247,9 +246,22 @@ void Simulation::run()
         // advance one CFD iteration
         computeTimeStep();
         solveMomentum();
+
+        // // Debugging: calculates and print out max divergence before velocity correction
+        // std::cout
+        //     << "Div before pressure = "
+        //     << computeMaximumDivergence(uStar, vStar)
+        //     << "\n";
+
         solvePressure();
         correctVelocity();
-        
+
+        // // Debugging: calculates and print out max divergence after velocity correction
+        // std::cout
+        //     << "Div after pressure = "
+        //     << computeMaximumDivergence(u, v)
+        //     << "\n";
+            
         // NaN check
         if(!allFinite(u) || !allFinite(v) || !allFinite(p))
         {
@@ -265,8 +277,8 @@ void Simulation::run()
         // Print progress every 100 iterations
         if (iteration % 100 == 0)
         {
-            double maxVelocity =
-                computeMaximumVelocity();
+            double maxVelocity = computeMaximumVelocity();
+            double maxPressure = maxAbs(p);
 
             std::cout
                 << "\n----------------------------------------\n";
@@ -289,6 +301,11 @@ void Simulation::run()
             std::cout
                 << "Max Speed : "
                 << maxVelocity
+                << "\n";
+
+            std::cout
+                << "Max pressure = "
+                << maxPressure
                 << "\n";
 
             std::cout
@@ -385,9 +402,9 @@ void Simulation::solveMomentum()
             //----------------------------
             // Update u* and v*
             //----------------------------
-            uStar(i,j) = u(i,j) + dt * ( -convectionU -(dpdx/config.rho)+diffusionU); 
+            uStar(i,j) = u(i,j) + dt * ( -convectionU -(dpdx/config.rho) + diffusionU); 
             
-            vStar(i,j) = v(i,j) + dt * ( -convectionV -(dpdy/config.rho)+diffusionV); 
+            vStar(i,j) = v(i,j) + dt * ( -convectionV -(dpdy/config.rho) + diffusionV); 
         }
     }
     // reapplyng the boundary conditions to the intermediate velocity
@@ -412,27 +429,36 @@ void Simulation::solvePressure()
                 double divergence = firstDerivativeX(uStar, i, j, dx) + firstDerivativeY(vStar, i, j, dy); // Compute divergence of u*
                 double source = (config.rho / dt) * divergence; //pressure source term
 
-                double neighborAverage = (p(i+1,j) + p(i-1,j) + p(i,j+1) + p(i,j-1)) / 4.0; // Average of neighboring cells pressures
-                //
+                double newPressure =
+                (
+                    p(i + 1, j)
+                  + p(i - 1, j)
+                  + p(i, j + 1)
+                  + p(i, j - 1)
+                  - dx * dx * source
+                ) / 4.0;
 
-                double newPressure = neighborAverage - (dx * dx / 4.0) * source; // Update pressure using Jacobi formula
+                maxPressureChange =
+                    std::max(
+                        maxPressureChange,
+                        std::abs(newPressure - p(i, j))
+                    );
 
-                // Tracking convergence
-                double change = std::abs(newPressure - p(i,j));
-                maxPressureChange = std::max(maxPressureChange, change);
-
-                pNew(i,j) = newPressure; // Store the new pressure value in a temporary matrix
+                // Gauss-Seidel update
+                p(i, j) = newPressure;
             }
         }
 
-        // Update the pressure field
-        for (int i = 1; i < N - 1; i++)
-        {
-            for (int j = 1; j < N - 1; j++)
-            {
-                p(i,j) = pNew(i,j);
-            }
-        }
+        // // Debugging: prints max pressure change after every 20 iterations
+        // if(iter % 20 == 0)
+        // {
+        //     std::cout
+        //         << "Pressure iter "
+        //         << iter
+        //         << " change = "
+        //         << maxPressureChange
+        //         << "\n";
+        // }
 
         applyPressureBoundaryConditions(); // apply boundary conditions to the pressure field
 
@@ -596,4 +622,27 @@ double Simulation::computeMaximumVelocity()
     }
 
     return maxVelocity;
+}
+
+// initialize compute maximmum divergence function
+double Simulation::computeMaximumDivergence(const Matrix& U,
+                                            const Matrix& V)
+{
+    double maxDiv = 0.0;
+
+    for (int i = 1; i < config.N - 1; ++i)
+    {
+        for (int j = 1; j < config.N - 1; ++j)
+        {
+            double dudx = firstDerivativeX(U, i, j, dx);
+            double dvdy = firstDerivativeY(V, i, j, dy);
+
+            maxDiv = std::max(
+                maxDiv,
+                std::abs(dudx + dvdy)
+            );
+        }
+    }
+
+    return maxDiv;
 }

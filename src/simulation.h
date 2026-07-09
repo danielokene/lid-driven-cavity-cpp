@@ -58,6 +58,8 @@ class Simulation
         void correctVelocity(); // Correct the velocity field to satisfy continuity
         double computeVelocityResidual(); // computes maximum velocity change
         double computeMaximumVelocity(); // computes the maximum velocity of the current iteration when called
+        double computeMaximumDivergence(const Matrix& U, const Matrix& V); // compute maximum divergence
+
 
         void writeSimulationInfo(const std::string& outputFolder); // writes simulation metadata to file
 
@@ -80,7 +82,6 @@ class Simulation
         Matrix uOld; // previous velocity in x-direction
         Matrix vOld; // previous velocity in y-direction
         Matrix p; // Pressure field
-        Matrix pNew; // temporary pressure matrix
 
 
         std::vector<double> residualHistory; // History of residuals for convergence monitoring
