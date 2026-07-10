@@ -35,28 +35,6 @@ Current implementation includes:
 
 ---
 
-# Governing Equations
-
-The solver computes the incompressible Navier–Stokes equations
-
-\[
-\nabla \cdot \mathbf{u}=0
-\]
-
-\[
-\frac{\partial \mathbf{u}}{\partial t}
-+
-(\mathbf{u}\cdot\nabla)\mathbf{u}
-=
--\frac{1}{\rho}\nabla p
-+
-\nu\nabla^2\mathbf{u}
-\]
-
-using the classical fractional-step (projection) method.
-
----
-
 # Numerical Algorithm
 
 For each iteration the solver performs

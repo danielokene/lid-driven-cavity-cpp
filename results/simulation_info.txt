@@ -1,0 +1,33 @@
+=========================================
+2D Lid-Driven Cavity Simulation
+=========================================
+
+Grid Information
+---------------------------
+Grid Size           : 130 x 130
+Domain Length       : 1
+Domain Height       : 1
+dx                  : 0.00775194
+dy                  : 0.00775194
+
+Flow Parameters
+---------------------------
+Reynolds Number     : 100
+Lid Velocity        : 1
+Density             : 1
+Kinematic Viscosity : 0.01
+
+Solver Settings
+---------------------------
+CFL Number          : 0.5
+Pressure Tolerance  : 1e-06
+Velocity Tolerance  : 1e-06
+Maximum Iterations  : 10000
+Pressure Iterations : 500
+
+Simulation Results
+---------------------------
+Final Time Step     : 0.00150231
+Iterations Performed: 6679
+Simulation Time   : 5506.38 s
+Final Residual      : 9.99853e-07
