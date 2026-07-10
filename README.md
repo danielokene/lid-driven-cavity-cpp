@@ -1,174 +1,292 @@
 # Lid-Driven Cavity Flow Solver in C++
+
 <p align="center">
   <img src="https://img.shields.io/badge/C%2B%2B-17-blue.svg" alt="C++17">
-  <img src="https://img.shields.io/badge/Python-post--processing-green.svg" alt="Python post-processing">
-  <img src="https://img.shields.io/badge/License-MIT-blue.svg" alt="MIT License">
+  <img src="https://img.shields.io/badge/Method-Finite%20Difference-orange.svg" alt="Finite Difference">
+  <img src="https://img.shields.io/badge/Python-Post--Processing-green.svg" alt="Python">
+  <img src="https://img.shields.io/badge/License-MIT-blue.svg" alt="MIT">
 </p>
 
-After implementing the 2D incompressible Cavity Flow Navier–Stokes equations using the Finite Difference Method in python (Link here), I developed this project with the objective of deepening my understanding of Computational Fluid Dynamics by translating the numerical methods learned in Python into a structured C++ implementation.
+A modern **C++17** implementation of the classical **2D incompressible lid-driven cavity flow** benchmark using the **Finite Difference Method (FDM)** and the **Pressure Projection Method**.
 
-Rather than simply reproducing the Python code, this project focuses on implementing the incompressible Navier–Stokes solver using modern C++ while developing good software engineering practices, numerical programming skills, and a foundation for future high-performance CFD solvers.
-
-This repository is not intended to be a production CFD package. Instead, it serves as a learning-focused baseline that I will continue to improve as I explore advanced numerical methods, parallel computing, and scientific computing.
+This project was developed after completing the **CFDPython – 12 Steps to Navier–Stokes** course as a way of translating the numerical algorithms into a modular C++ codebase while following modern software engineering practices. The repository serves as a foundation for future high-performance CFD implementations using OpenMP, MPI, CUDA, and more advanced numerical methods.
 
 ---
 
-# What the code does
+# Solver Overview
 
-The solver computes the incompressible lid-driven cavity flow on a structured Cartesian grid. The top wall moves with a constant velocity while the remaining walls are stationary, producing the characteristic recirculating flow inside the cavity.
+The lid-driven cavity problem is one of the most widely used benchmark problems in Computational Fluid Dynamics (CFD). A square cavity is filled with incompressible fluid where the top wall moves at a constant velocity while the remaining walls remain stationary. The resulting recirculating flow provides an excellent validation case for incompressible Navier–Stokes solvers.
 
 Current implementation includes:
 
-* Serial C++17 solver
-* Two-dimensional incompressible Navier–Stokes equations
-* Finite Difference Method (FDM)
-* Explicit time integration
-* Pressure Poisson Equation
-* Pressure projection method
-* Structured Cartesian grid
-* No-slip wall boundary conditions
-* CSV output for pressure and velocity fields
-* Python scripts for visualization and post-processing
-
-The numerical methodology follows the projection algorithm introduced in **Step 11 (Lid-Driven Cavity Flow)** of the CFDPython course, adapted and implemented independently in C++.
+- ✅ C++17 implementation
+- ✅ Finite Difference Method (FDM)
+- ✅ Incompressible Navier–Stokes Equations
+- ✅ Pressure Projection Method
+- ✅ Gauss-Seidel Pressure Poisson Solver
+- ✅ Structured Cartesian Grid
+- ✅ Explicit Time Integration
+- ✅ No-slip Wall Boundary Conditions
+- ✅ Adaptive Time Step Calculation
+- ✅ CSV Output
+- ✅ Python Visualization Scripts
+- ✅ Automated Verification Scripts
+- ✅ Ghia et al. (1982) Validation
 
 ---
 
-# Example Result
+# Governing Equations
 
-The figure below shows a representative solution after the flow has developed inside the cavity.
+The solver computes the incompressible Navier–Stokes equations
 
-*(Insert velocity vectors, pressure contours, streamlines, or animation here.)*
+\[
+\nabla \cdot \mathbf{u}=0
+\]
+
+\[
+\frac{\partial \mathbf{u}}{\partial t}
++
+(\mathbf{u}\cdot\nabla)\mathbf{u}
+=
+-\frac{1}{\rho}\nabla p
++
+\nu\nabla^2\mathbf{u}
+\]
+
+using the classical fractional-step (projection) method.
+
+---
+
+# Numerical Algorithm
+
+For each iteration the solver performs
+
+1. Compute intermediate velocities
+2. Assemble the Pressure Poisson Equation
+3. Solve pressure using Gauss-Seidel iteration
+4. Remove mean pressure to eliminate pressure null-space drift
+5. Correct the velocity field
+6. Apply boundary conditions
+7. Compute residuals
+8. Repeat until convergence
+
+A detailed explanation is provided in **docs/METHODOLOGY.md**.
+
+---
+
+# Results
+
+## Velocity Magnitude
+
+<p align="center">
+<img src="plots/velocity_plot.png" width="650">
+</p>
+
+---
+
+## Streamlines
+
+<p align="center">
+<img src="plots/streamline_plot.png" width="650">
+</p>
+
+---
+
+## Pressure Contours
+
+<p align="center">
+<img src="plots/pressure_plot.png" width="650">
+</p>
+
+---
+
+## Residual History
+
+<p align="center">
+<img src="plots/residual_plot.png" width="650">
+</p>
 
 ---
 
 # Validation
 
-The numerical solution will be validated against the classical benchmark published by Ghia et al. (1982).
+The numerical solution is validated against the classical benchmark
 
-The primary comparisons will include:
+> **Ghia, Ghia & Shin (1982)**
 
-* Horizontal velocity, **u(y)**, along the vertical centreline (*x = 0.5*)
-* Vertical velocity, **v(x)**, along the horizontal centreline (*y = 0.5*)
+using
 
-Future versions of this repository will report:
+- Horizontal velocity along the vertical centreline
+- Vertical velocity along the horizontal centreline
 
-* L₂ error
-* L∞ error
-* Mesh convergence
-* Reynolds number studies
+## Ghia Validation
 
----
-
-# How it works
-
-The solver advances the incompressible Navier–Stokes equations in pseudo-time using the classical pressure projection method.
-
-Each iteration performs the following steps:
-
-1. Predict the intermediate velocity field.
-2. Assemble the source term for the Pressure Poisson Equation.
-3. Solve the Pressure Poisson Equation.
-4. Correct the velocity and pressure fields.
-5. Apply the wall boundary conditions.
-6. Repeat until the specified number of time steps is reached.
-
-Further details are provided in **docs/METHODOLOGY.md**.
+<p align="center">
+<img src="plots/ghia_validation.png" width="750">
+</p>
 
 ---
 
-# Running
+# Automated Verification
 
-The project is designed to run on Linux or Windows Subsystem for Linux (WSL).
+The repository includes Python scripts for automatic verification of
 
-After building with CMake:
+- Boundary conditions
+- Continuity (divergence)
+- Residual history
+- Pressure contours
+- Velocity magnitude
+- Streamlines
+- Ghia benchmark comparison
+
+Run all scripts
 
 ```bash
-mkdir build
-cd build
-cmake ..
-make
-./lid_cavity
+for file in scripts/*.py; do
+    python "$file"
+done
 ```
-
-Simulation outputs are written as CSV files and can be visualized using the accompanying Python plotting scripts.
 
 ---
 
 # Repository Structure
 
 ```text
-src/            C++ source files
-docs/           Numerical methods and documentation
-results/        Simulation outputs and figures
-scripts/        Build and plotting scripts
-assets/         images and other files
+lid-driven-cavity-cpp/
+│
+├── plots/
+│   ├── velocity_plot.png
+│   ├── streamline_plot.png
+│   ├── pressure_plot.png
+│   ├── residual_plot.png
+│   └── ghia_validation.png
+│
+├── docs/
+│   └── METHODOLOGY.md
+│
+├── results/
+│   ├── velocity_u.csv
+│   ├── velocity_v.csv
+│   ├── pressure.csv
+│   ├── velocity_magnitude.csv
+|   ├── simulation_info.txt
+│   ├── x.csv
+│   ├── y.csv
+│   └── residual_history.csv
+│
+├── scripts/
+│   ├── compare_ghia.py
+│   ├── plot_pressure.py
+│   ├── common.py
+│   ├── plot_velocity.py
+│   ├── plot_streamlines.py
+│   ├── plot_residual.py
+│   ├── verify_bc.py
+│   └── check_divergence.py
+│
+├── src/
+│   ├── csv_writer.cpp
+│   ├── csv_writer.h
+│   ├── main.cpp
+│   ├── matrix.h
+│   ├── simulation.cpp
+│   └── simulation.h
+│
+├── CMakeLists.txt
+├── README.md
+└── LICENSE
+```
+
+---
+
+# Building
+
+Clone the repository
+
+```bash
+git clone https://github.com/YOUR_USERNAME/lid-driven-cavity-cpp.git
+
+cd lid-driven-cavity-cpp
+```
+
+Build
+
+```bash
+mkdir -p build
+cd build
+
+cmake ..
+make -j
+
+cd ..
+```
+
+Run
+
+```bash
+./LidDrivenCavity
 ```
 
 ---
 
 # Requirements
 
-Solver:
+### Solver
 
-* C++17 compatible compiler
-* CMake
+- C++17
+- CMake
 
-Visualization:
+### Python
 
-* Python 3
-* NumPy
-* Matplotlib
-
-WSL is recommended for Windows users to provide a Linux-like development environment.
-
----
-
-# Learning Objectives
-
-This project is part of my Computational Fluid Dynamics learning journey. Through its development, I aim to strengthen my understanding of:
-
-* Finite Difference Methods
-* Numerical solution of partial differential equations
-* Pressure–velocity coupling
-* Incompressible Navier–Stokes equations
-* Scientific programming in C++
-* Software engineering for scientific computing
+- Python 3
+- NumPy
+- Matplotlib
 
 ---
 
 # Future Improvements
 
-Planned extensions include:
-
-* Higher-order convection schemes
-* Successive Over-Relaxation (SOR)
-* Multigrid pressure solver
-* Adaptive time stepping
-* Parallelization with OpenMP
-* Distributed computing with MPI
-* GPU acceleration using CUDA
-* ParaView (VTK) output
-* Validation over multiple Reynolds numbers and mesh sizes
+- Higher-order convection schemes
+- Successive Over-Relaxation (SOR)
+- Multigrid pressure solver
+- Staggered grid formulation
+- Adaptive mesh refinement
+- OpenMP parallelization
+- MPI implementation
+- CUDA implementation
+- VTK output for ParaView
+- Multiple Reynolds number validation
+- Grid independence studies
+- Performance benchmarking
 
 ---
 
 # References
 
-1. Barba, L. A., et al. **CFDPython: 12 Steps to Navier–Stokes.**
+1. Lorena A. Barba et al.
 
-2. Ghia, U., Ghia, K. N., & Shin, C. T. (1982). *High-Re solutions for incompressible flow using the Navier–Stokes equations and a multigrid method.* Journal of Computational Physics, 48(3), 387–411.
+   **CFDPython: 12 Steps to Navier–Stokes**
 
-3. Ferziger, J. H., & Perić, M. *Computational Methods for Fluid Dynamics.*
+2. Ghia, U., Ghia, K. N., & Shin, C. T.
+
+   *High-Re solutions for incompressible flow using the Navier–Stokes equations and a multigrid method.*
+
+   Journal of Computational Physics, 48(3), 387–411.
+
+3. Ferziger, J. H., & Perić, M.
+
+   *Computational Methods for Fluid Dynamics.*
 
 ---
 
 # Acknowledgements
 
-This project was inspired by the **CFDPython – 12 Steps to Navier–Stokes** educational course developed by Professor Lorena A. Barba and collaborators. The numerical algorithms implemented here are based on concepts learned from that course, while the C++ implementation, repository structure, documentation, and future extensions are my own.
+This project was inspired by the **CFDPython – 12 Steps to Navier–Stokes** educational course developed by **Professor Lorena A. Barba** and collaborators.
+
+While the numerical formulation follows the concepts introduced in that course, the C++ implementation, software architecture, validation workflow, visualization tools, documentation, and future development roadmap were independently designed and implemented as part of my Computational Fluid Dynamics learning journey.
 
 ---
 
 # License
 
-Released under the MIT License.
+Released under the **MIT License**.
