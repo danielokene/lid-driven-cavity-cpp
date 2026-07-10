@@ -580,7 +580,7 @@ void Simulation::writeSimulationInfo(const std::string& outputFolder)
     file << "Reynolds Number     : " << config.Re << "\n";
     file << "Lid Velocity        : " << config.lidVelocity << "\n";
     file << "Density             : " << config.rho << "\n";
-    file << "Kinematic kinematicViscosity : " << config.kinematicViscosity() << "\n\n";
+    file << "Kinematic Viscosity : " << config.kinematicViscosity() << "\n\n";
 
     file << "Solver Settings\n";
     file << "---------------------------\n";

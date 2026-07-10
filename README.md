@@ -5,9 +5,7 @@
   <img src="https://img.shields.io/badge/License-MIT-blue.svg" alt="MIT License">
 </p>
 
-This is a C++17 implementation of the classical two-dimensional lid-driven cavity flow problem.
-
-I developed this project after completing the **CFDPython – 12 Steps to Navier–Stokes** course by the Barba Group. The objective was to deepen my understanding of Computational Fluid Dynamics by translating the numerical methods learned in Python into a structured C++ implementation.
+After implementing the 2D incompressible Cavity Flow Navier–Stokes equations using the Finite Difference Method in python (Link here), I developed this project with the objective of deepening my understanding of Computational Fluid Dynamics by translating the numerical methods learned in Python into a structured C++ implementation.
 
 Rather than simply reproducing the Python code, this project focuses on implementing the incompressible Navier–Stokes solver using modern C++ while developing good software engineering practices, numerical programming skills, and a foundation for future high-performance CFD solvers.
 

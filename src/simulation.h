@@ -29,7 +29,7 @@ struct Config
     double cfl = 0.5; // CFL number for stability
     double pressureTolerance = 1e-6; // pressure convergence tolerance
     double velocityTolerance = 1e-6; // velocity convergence tolerance
-    int maxIterations = 1000; // maximum number of iterations
+    int maxIterations = 10000; // maximum number of iterations
     int pressureIterations = 500; // number of iterations for pressure solver
 
 };

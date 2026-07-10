@@ -4,7 +4,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 
-PROJECT_DIR = Path(__file__).resolev().parent.parent
+PROJECT_DIR = Path(__file__).resolve().parent.parent
 RESULTS_DIR = PROJECT_DIR / "results"
 FIGURES_DIR = PROJECT_DIR / "figures"
 

@@ -28,11 +28,14 @@ plt.semilogy(
 ## labels and title
 plt.xlabel("Iteration")
 plt.ylabel("Velocity Residuals")
-plt.title("SOlver Convergence History")
+plt.title("Solver Convergence History")
 
 plt.grid(True)
-saveFigure("residual.png")
-plt.show()
+plt.savefig(
+    "plots/residual_plot.png",
+    dpi=300,
+    bbox_inches="tight"
+)
 
 ## annotating the final residual value
 plt.text(
@@ -40,3 +43,5 @@ plt.text(
     residual[-1],
     f"{residual[-1]:.2e}"
 )
+
+print("Saved plots/residual_plot.png")

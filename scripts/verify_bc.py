@@ -12,7 +12,7 @@ print("Boundary Condition Verification")
 print("=" * 40)
 
 # u BC
-top_u = np.max(np.abs(u[:, -1] - 1.0))
+top_u = np.max(np.abs(u[1: -1, -1] - 1.0))
 bottom_u = np.max(np.abs(u[:, 0]))
 left_u = np.max(np.abs(u[0, 1: -1]))
 right_u = np.max(np.abs(u[-1, 1: -1]))
