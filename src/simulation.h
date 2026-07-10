@@ -30,7 +30,7 @@ struct Config
     double pressureTolerance = 1e-6; // pressure convergence tolerance
     double velocityTolerance = 1e-6; // velocity convergence tolerance
     int maxIterations = 1000; // maximum number of iterations
-    int pressureIterations = 100; // number of iterations for pressure solver
+    int pressureIterations = 500; // number of iterations for pressure solver
 
 };
 
@@ -56,6 +56,7 @@ class Simulation
         void solveMomentum(); // Solve the momentum equations for velocity fields
         void solvePressure(); // Solve the pressure Poisson equation
         void correctVelocity(); // Correct the velocity field to satisfy continuity
+        void removePressureMean(); // remove the mean pressure after every iteration to enforce continuity
         double computeVelocityResidual(); // computes maximum velocity change
         double computeMaximumVelocity(); // computes the maximum velocity of the current iteration when called
         double computeMaximumDivergence(const Matrix& U, const Matrix& V); // compute maximum divergence

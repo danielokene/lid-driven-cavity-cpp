@@ -205,6 +205,10 @@ void Simulation::applyVelocityBoundaryConditions(Matrix& U, Matrix& V)
         U(i, N - 1) = config.lidVelocity;
         V(i, N - 1) = 0.0;
     }
+
+    // Explicitly kill the lid corners
+    U(0, N - 1) = 0.0;
+    U(N - 1, N - 1) = 0.0;
 }
 
 // initialize pressure boundary conditions function
@@ -227,7 +231,7 @@ void Simulation::applyPressureBoundaryConditions()
     }
 
     // Reference pressure
-    p(0, 0) = 0.0;
+    // p(0, 0) = 0.0;
 }
 
 // initialize run simulation function
@@ -238,7 +242,7 @@ void Simulation::run()
     initialize();
 
     iteration = 0;  // setting iteration = 0 for new simulation
-    while (iteration < config.maxIterations)
+    while (iteration <= config.maxIterations)
     {
         uOld = u; // Store the previous velocity field
         vOld = v; // Store the previous velocity field
@@ -254,6 +258,7 @@ void Simulation::run()
         //     << "\n";
 
         solvePressure();
+        removePressureMean();
         correctVelocity();
 
         // // Debugging: calculates and print out max divergence after velocity correction
@@ -645,4 +650,27 @@ double Simulation::computeMaximumDivergence(const Matrix& U,
     }
 
     return maxDiv;
+}
+
+// initialize the remove pressure mean function
+void Simulation::removePressureMean()
+{
+    int N = config.N;
+    double sum = 0.0;
+    int count = 0;
+
+    for (int i = 0; i < N; i++)
+    {
+        for (int j = 0; j < N; j++)
+        {
+            sum += p(i, j);
+            count++;
+        }
+    }
+
+    double mean = sum / count;
+
+    for (int i = 0; i < N; i++)
+        for (int j = 0; j < N; j++)
+            p(i, j) -= mean;
 }
