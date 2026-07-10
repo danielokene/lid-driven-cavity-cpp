@@ -57,7 +57,7 @@ A detailed explanation is provided in **docs/METHODOLOGY.md**.
 ## Velocity Magnitude
 
 <p align="center">
-<img src="plots/velocity_plot.png" width="650">
+<img src="plots/velocity_plot.png" width="450">
 </p>
 
 ---
@@ -65,7 +65,7 @@ A detailed explanation is provided in **docs/METHODOLOGY.md**.
 ## Streamlines
 
 <p align="center">
-<img src="plots/streamline_plot.png" width="650">
+<img src="plots/streamline_plot.png" width="450">
 </p>
 
 ---
@@ -73,7 +73,7 @@ A detailed explanation is provided in **docs/METHODOLOGY.md**.
 ## Pressure Contours
 
 <p align="center">
-<img src="plots/pressure_plot.png" width="650">
+<img src="plots/pressure_plot.png" width="450">
 </p>
 
 ---
@@ -81,7 +81,7 @@ A detailed explanation is provided in **docs/METHODOLOGY.md**.
 ## Residual History
 
 <p align="center">
-<img src="plots/residual_plot.png" width="650">
+<img src="plots/residual_plot.png" width="450">
 </p>
 
 ---
@@ -100,7 +100,7 @@ using
 ## Ghia Validation
 
 <p align="center">
-<img src="plots/ghia_validation.png" width="750">
+<img src="plots/ghia_validation.png" width="600">
 </p>
 
 ---
